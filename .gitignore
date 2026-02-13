@@ -1,0 +1,5 @@
+Manifest.toml
+.CondaPkg/
+*.jl.cov
+*.jl.*.cov
+*.jl.mem

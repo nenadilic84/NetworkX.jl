@@ -1,0 +1,4 @@
+[deps]
+networkx = ""
+numpy = ""
+scipy = ""
