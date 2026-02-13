@@ -9,9 +9,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}-${{ (github.ref != 'refs/heads/master' && github.ref != 'refs/heads/main') || github.run_number }}
   cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
-env:
-  PYTHON: ~
-
 jobs:
   test:
     name: Julia ${{ matrix.version }} - t=${{ matrix.threads }} - ${{ matrix.os }} - ${{ matrix.arch }} - ${{ github.event_name }}
@@ -20,7 +17,7 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1'
+          - '1.11'
         os:
           - ubuntu-latest
           - windows-latest
@@ -32,7 +29,7 @@ jobs:
         include:
           - arch: aarch64
             os: macos-latest
-            version: '1'
+            version: '1.11'
             threads: '2'
     steps:
       - uses: actions/checkout@v4
