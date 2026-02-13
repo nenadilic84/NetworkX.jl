@@ -33,22 +33,27 @@ jobs:
             threads: '2'
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install Python dependencies
+        run: pip install networkx numpy scipy
       - uses: julia-actions/setup-julia@v2
         with:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - uses: julia-actions/cache@v2
+      - name: Configure PythonCall to use system Python
+        shell: bash
+        run: |
+          PYPATH=$(python3 -c "import sys; print(sys.executable)" 2>/dev/null || python -c "import sys; print(sys.executable)")
+          echo "PYTHON=$PYPATH" >> $GITHUB_ENV
+          echo "JULIA_CONDAPKG_BACKEND=Null" >> $GITHUB_ENV
+          echo "Using Python: $PYPATH"
       - uses: julia-actions/julia-buildpkg@v1
-        env:
-          PYTHON: python
-      - name: Resolve CondaPkg environment
-        run: julia --project=. -e 'using CondaPkg; CondaPkg.resolve()'
-        env:
-          JULIA_PYTHONCALL_EXE: "@CondaPkg"
       - uses: julia-actions/julia-runtest@v1
         env:
           JULIA_NUM_THREADS: ${{ matrix.threads }}
-          JULIA_PYTHONCALL_EXE: "@CondaPkg"
       - uses: julia-actions/julia-processcoverage@v1
       - uses: codecov/codecov-action@v4
         with:
